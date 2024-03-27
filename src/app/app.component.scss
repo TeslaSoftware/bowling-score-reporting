@@ -1,0 +1,27 @@
+main {
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: inherit;
+    position: relative;
+  }
+
+.header {
+    text-align: center;
+    h1 {
+        margin: 0;
+    }
+    h3 {
+        margin: 0.4rem;
+    }
+}
+
+
+@media screen and (max-width: 650px) {
+    .content {
+      flex-direction: column;
+      width: max-content;
+    }
+  }
