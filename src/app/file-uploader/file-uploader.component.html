@@ -1,7 +1,8 @@
 <div class="file-upload">
     <input type="file" class="native-file-input" (change)="onFileSelected($event)" #fileUpload>
     <div class="file-name" >
-        <div *ngIf="fileName; else noFileUploaded">Załadowano plik "<i>{{fileName}}"</i></div>
+        <div *ngIf="fileName; else noFileUploaded">
+            {{errorMessage ? "Nie udało się załądować pliku " : "Załadowano plik" }} "<i>{{fileName}}"</i></div>
         <ng-template #noFileUploaded>Proszę załądować plik</ng-template>
     </div>
 
