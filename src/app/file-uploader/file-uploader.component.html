@@ -1,10 +1,23 @@
 <div class="file-upload">
     <input type="file" class="native-file-input" (change)="onFileSelected($event)" #fileUpload>
-    <div class="file-name">{{fileName || "Proszę przesłać plik"}}</div>
+    <div class="file-name" >
+        <div *ngIf="fileName; else noFileUploaded">Załadowano plik "<i>{{fileName}}"</i></div>
+        <ng-template #noFileUploaded>Proszę załądować plik</ng-template>
+    </div>
 
     <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
         <mat-icon>upload_file</mat-icon>
     </button>
+</div>
+
+<div class="error-message" *ngIf="errorMessage">{{errorMessage}}</div>
+
+<div class="progress">
+
+    <mat-progress-bar class="progress-bar" mode="determinate" [value]="uploadProgressPerc" *ngIf="uploadProgressPerc">
+    </mat-progress-bar>
+    <mat-icon class="cancel-upload" (click)="cancelUpload()" *ngIf="uploadProgressPerc">
+        delete_forever
+    </mat-icon>
 
 </div>
-<div class="error-message" *ngIf="errorMessage">{{errorMessage}}</div>
