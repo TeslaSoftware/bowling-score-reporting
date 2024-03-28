@@ -12,12 +12,6 @@
 
 <div class="error-message" *ngIf="errorMessage">{{errorMessage}}</div>
 
-<div class="progress">
-
-    <mat-progress-bar class="progress-bar" mode="determinate" [value]="uploadProgressPerc" *ngIf="uploadProgressPerc">
-    </mat-progress-bar>
-    <mat-icon class="cancel-upload" (click)="cancelUpload()" *ngIf="uploadProgressPerc">
-        delete_forever
-    </mat-icon>
-
+<div class="progress" *ngIf="isUploading">
+    <mat-progress-bar class="progress-bar" mode="indeterminate" />
 </div>
