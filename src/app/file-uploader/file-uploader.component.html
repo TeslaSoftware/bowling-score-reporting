@@ -1,0 +1,10 @@
+<div class="file-upload">
+    <input type="file" class="native-file-input" (change)="onFileSelected($event)" #fileUpload>
+    <div class="file-name">{{fileName || "Proszę przesłać plik"}}</div>
+
+    <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+        <mat-icon>upload_file</mat-icon>
+    </button>
+
+</div>
+<div class="error-message" *ngIf="errorMessage">{{errorMessage}}</div>
