@@ -19,7 +19,8 @@ import { MAX_ROLLS, MIN_FRAMES } from '../app.constants';
   styleUrl: './table-scores.component.scss'
 })
 export class TableScoresComponent {
-  private componentDestroyed$: Subject<boolean> = new Subject()
+  private readonly componentDestroyed$: Subject<boolean> = new Subject()
+  private readonly ROLL_LABEL_REGEX = new RegExp(/^Rzut\s*\d{1,2}\s*\((\d{1,2})\)$/);
   baseColumns: string[] = ['playerName', 'totalScore'];
   scoreColumns: string[] = this.buildScoreColumns();
   frameHeaders: string[] = this.buildFrameHeaders();  
@@ -42,13 +43,20 @@ export class TableScoresComponent {
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe(updatedBowlingResults => {
         this.dataSource.data = updatedBowlingResults;
-      });
-
-      
+      });      
   }
 
   ngAfterViewInit() {
     this.setDataSourceAttributes();
+
+    this.dataSource.sortingDataAccessor = (data: any, sortHeaderId: string) => {
+      const regexResult = this.ROLL_LABEL_REGEX.exec(sortHeaderId);
+      if (regexResult) {
+        const index = Number(regexResult[1]) - 1;
+        return data.scores[index];
+      }
+      return data[sortHeaderId as keyof typeof data];
+    };
   }
 
   ngOnDestroy() {
