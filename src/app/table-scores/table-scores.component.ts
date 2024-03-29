@@ -8,6 +8,7 @@ import { IBowlingResult } from '../ibowling-result'
 import { ParsingService } from '../parsing-service.service'
 import { takeUntil } from "rxjs/operators"
 import { Subject } from 'rxjs';
+import { MAX_ROLLS, MIN_FRAMES } from '../app.constants';
 
 
 @Component({
@@ -21,7 +22,7 @@ export class TableScoresComponent {
   private componentDestroyed$: Subject<boolean> = new Subject()
   baseColumns: string[] = ['playerName', 'totalScore'];
   scoreColumns: string[] = this.buildScoreColumns();
-  frameHeaders: string[] = Array.from({length: 10}, (v, k) => 'Runda ' + (k+1)).concat(['Runda bonus']); 
+  frameHeaders: string[] = this.buildFrameHeaders();  
   groupHeaders: string[] = ['blank'].concat(this.frameHeaders);
   displayedColumns: string[] = this.baseColumns.concat(this.scoreColumns);
 
@@ -65,14 +66,23 @@ export class TableScoresComponent {
    * Builds score column header names.
    * @example
    * Rzut 1 (7)
-   * Where number in paranthesis is total number of rolls.   * 
+   * Where number in paranthesis is total number of rolls.
    */
   private buildScoreColumns() {
-    return Array.from({length: 22}, (v, k) => (k+1)).map(this.createScoreColumnName); 
+    return Array.from({length: MAX_ROLLS}, (v, k) => (k+1)).map(this.createScoreColumnName); 
   }
 
   private createScoreColumnName(rollNumber: number): string {
     const frameRollNumber = rollNumber % 2 == 0 ? 2 : 1;
     return `Rzut ${frameRollNumber} (${rollNumber})`
+  }
+
+  /** 
+   * Builds frame header names.
+   * @example
+   * Runda 7 
+   */
+  private buildFrameHeaders(): string[]{
+    return Array.from({length: MIN_FRAMES}, (v, k) => 'Runda ' + (k+1)).concat(['Runda Bonusowa']);
   }
 }

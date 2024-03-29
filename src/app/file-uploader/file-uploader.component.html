@@ -1,22 +1,23 @@
 <mat-card>
     <mat-card-content>
-<div class="file-upload">
-    <input type="file" class="native-file-input" (change)="onFileSelected($event)" #fileUpload>
-    <div class="file-name" >
-        <div *ngIf="fileName; else noFileUploaded">
-            {{errorMessage ? "Nie udało się załądować pliku " : "Załadowano plik" }} "<i>{{fileName}}"</i></div>
-        <ng-template #noFileUploaded>Proszę załądować plik</ng-template>
-    </div>
+        <div class="file-upload">
+            <input type="file" class="native-file-input" (change)="onFileSelected($event)" #fileUpload>
+            
+            <div class="file-name" >
+                <div *ngIf="fileName; else noFileUploaded">
+                    {{errorMessage ? "Nie udało się załądować pliku " : "Załadowano plik" }} "<i>{{fileName}}"</i></div>
+                <ng-template #noFileUploaded>Proszę załądować plik</ng-template>
+            </div>
 
-    <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
-        <mat-icon>upload_file</mat-icon>
-    </button>
-</div>
+            <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
+                <mat-icon>upload_file</mat-icon>
+            </button>
+        </div>
 
-<div class="error-message" *ngIf="errorMessage">{{errorMessage}}</div>
+        <div class="error-message" *ngIf="errorMessage">{{errorMessage}}</div>
 
-<div class="progress" *ngIf="isUploading">
-    <mat-progress-bar class="progress-bar" mode="indeterminate" />
-</div>
-</mat-card-content>    
+        <div class="progress" *ngIf="isUploading">
+            <mat-progress-bar class="progress-bar" mode="indeterminate" />
+        </div>
+    </mat-card-content>    
 </mat-card>

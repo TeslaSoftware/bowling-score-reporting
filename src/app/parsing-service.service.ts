@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IBowlingResult } from './ibowling-result'
 import { of, Observable, BehaviorSubject } from 'rxjs';
+import { MAX_ROLLS, MAX_SCORE_PER_FRAME, MIN_ROLLS } from './app.constants';
 
 /** 
  * Service parsing and validating raw text data into bowling result type. 
@@ -17,7 +18,6 @@ export class ParsingService {
     if (!rawTextData) {
       return of('Błąd podczas przetwarzania pliku. Plik jest pusty!');
     }
-    console.log(rawTextData);
 
     return of(this.performParsing(rawTextData));
   }
@@ -34,14 +34,11 @@ export class ParsingService {
       } else if (error instanceof Error) {
         errorMessage = error.message
       }
-      console.log("Parsing failed due to " + errorMessage);
       return errorMessage;
     } finally {
       this.bowlingResultsSubject.next(bowlingResults);
     }
 
-    console.log("Parsing was successful!!");
-    console.log(bowlingResults);
     return '';
   }
 
@@ -64,7 +61,7 @@ export class ParsingService {
 
     for (let i = 0; i + 1 < textLines.length; i += 2) {
       const playerName = textLines[i].trim();
-      const scores = this.parseAndValidateScoresString(textLines[i + 1]);
+      const scores = this.parseAndValidateScoresString(textLines[i + 1], playerName);
       const totalScore = this.calculateTotalScore(scores);
 
       const bowlingResult: IBowlingResult = {
@@ -84,23 +81,23 @@ export class ParsingService {
    * the second roll of this frame will be marked as 0.
    * Therefore there always will be between 20 and 22 rolls in total.
    * */
-  private parseAndValidateScoresString(scoresLine: string): number[] {
+  private parseAndValidateScoresString(scoresLine: string, playerName: string): number[] {
     const scoresStrings = scoresLine.split(",").map(str => str.trim())
 
     if (scoresStrings.some(item => !this.isNumeric(item))) {
-      throw new Error("Nieprawidłowy format! Przynajmniej jeden z rzutów jest nie jest numerem");
+      throw new Error(`Nieprawidłowy format pliku! Przynajmniej jeden z rzutów zawodnika ${playerName} nie jest numerem.`);
     }
 
     const numericScores = scoresStrings.map(str => parseInt(str));
 
-    if (numericScores.length < 20 || numericScores.length > 22) {
-      throw new Error("Nieprawidłowy format. Oczekiwano numer rzutów między 20 a 22, a było " + numericScores.length);
+    if (numericScores.length < MIN_ROLLS || numericScores.length > MAX_ROLLS) {
+      throw new Error(`Nieprawidłowy format pliku! Oczekiwano numer rzutów między ${MIN_ROLLS} a ${MAX_ROLLS}, a zawodnik ${playerName} miał ${numericScores.length} rzutów.`);
     }
 
     for (let i = 0; i + 1 < numericScores.length; i += 2) {
       const scoreForBothRolls = numericScores[i] + numericScores[i + 1]
-      if (scoreForBothRolls > 10) {
-        throw new Error("Nieprawidłowy format. W jednej rundzie można maksymalnie zdobyć 10 punktów a zawodnik zdobył " + scoreForBothRolls);
+      if (scoreForBothRolls > MAX_SCORE_PER_FRAME) {
+        throw new Error(`Nieprawidłowy format pliku! W jednej rundzie można maksymalnie zdobyć 10 punktów a zawodnik ${playerName} zdobył ${scoreForBothRolls}.`);
       }
     }
 
@@ -137,10 +134,9 @@ export class ParsingService {
       isStrike = false;
       isSpare = false;
 
-      if ((firstRoll === 10 && secondRoll === 0)
-        || (firstRoll === 0 && secondRoll === 10)) {
+      if ((firstRoll === MAX_SCORE_PER_FRAME && secondRoll === 0)) {
         isStrike = true;
-      } else if (firstRoll + secondRoll === 10) {
+      } else if (firstRoll + secondRoll === MAX_SCORE_PER_FRAME) {
         isSpare = true;
       }
     }
