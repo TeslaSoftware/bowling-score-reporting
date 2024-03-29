@@ -76,9 +76,9 @@ export class FileUploaderComponent {
     return extension === "txt";
   }
 
-  private handleParsingResult(isValidParsedData: boolean) {
-    if (!isValidParsedData) {
-      this.errorMessage = "Wystąpił bład podczas wgrywania pliku. Nieprawidłowy format"
+  private handleParsingResult(parsingError: string) {
+    if (parsingError) {
+      this.errorMessage = parsingError;
     }
 
     // Opóźnij uaktualnienie zmiennej aby pokazać pasek łądowania

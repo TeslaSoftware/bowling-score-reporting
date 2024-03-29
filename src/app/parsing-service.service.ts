@@ -13,9 +13,9 @@ import { of, Observable, BehaviorSubject } from 'rxjs';
 export class ParsingService {
   private bowlingResultsSubject: BehaviorSubject<IBowlingResult[]> = new BehaviorSubject(new Array<IBowlingResult>());
 
-  parseTextToData(rawTextData: string): Observable<boolean> {
+  parseTextToData(rawTextData: string): Observable<string> {
     if (!rawTextData) {
-      return of(false);
+      return of('Błąd podczas przetwarzania pliku. Plik jest pusty!');
     }
     console.log(rawTextData);
 
@@ -23,26 +23,26 @@ export class ParsingService {
   }
 
   /** Pefroms parsing, updates data and returns whether parsing was successful. */
-  private performParsing(rawTextData: string): boolean {
+  private performParsing(rawTextData: string): string {
     let bowlingResults: IBowlingResult[] = [];
     try {
       bowlingResults = this.parseAndValidateRawText(rawTextData);
     } catch (error: unknown) {
-      let errorMessage;
+      let errorMessage = '';
       if (typeof error === "string") {
         errorMessage = error.toUpperCase()
       } else if (error instanceof Error) {
         errorMessage = error.message
       }
       console.log("Parsing failed due to " + errorMessage);
-      return false;
+      return errorMessage;
     } finally {
       this.bowlingResultsSubject.next(bowlingResults);
     }
 
     console.log("Parsing was successful!!");
     console.log(bowlingResults);
-    return true;
+    return '';
   }
 
   getBowlingResults(): BehaviorSubject<IBowlingResult[]> {
