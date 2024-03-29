@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IBowlingResult } from './ibowling-result'
-import { of, Observable, BehaviorSubject } from 'rxjs';
+import { of, Observable, BehaviorSubject, throwError } from 'rxjs';
 import { MAX_ROLLS, MAX_SCORE_PER_FRAME, MIN_ROLLS } from './app.constants';
 
 /** 
@@ -14,32 +14,30 @@ import { MAX_ROLLS, MAX_SCORE_PER_FRAME, MIN_ROLLS } from './app.constants';
 export class ParsingService {
   private bowlingResultsSubject: BehaviorSubject<IBowlingResult[]> = new BehaviorSubject(new Array<IBowlingResult>());
 
-  parseTextToData(rawTextData: string): Observable<string> {
+    /** Pefroms parsing, updates data and throws error if parsing fails. */
+  parseTextToData(rawTextData: string): Observable<never> {
     if (!rawTextData) {
-      return of('Błąd podczas przetwarzania pliku. Plik jest pusty!');
+      return throwError(() => new Error('Błąd podczas przetwarzania pliku. Plik jest pusty!'));
     }
-
-    return of(this.performParsing(rawTextData));
-  }
-
-  /** Pefroms parsing, updates data and returns whether parsing was successful. */
-  private performParsing(rawTextData: string): string {
+    
     let bowlingResults: IBowlingResult[] = [];
     try {
       bowlingResults = this.parseAndValidateRawText(rawTextData);
     } catch (error: unknown) {
       let errorMessage = '';
+
       if (typeof error === "string") {
-        errorMessage = error.toUpperCase()
+        errorMessage = error;
       } else if (error instanceof Error) {
         errorMessage = error.message
       }
-      return errorMessage;
+      
+      return throwError(() => new Error(errorMessage));
     } finally {
       this.bowlingResultsSubject.next(bowlingResults);
     }
 
-    return '';
+    return of();
   }
 
   getBowlingResults(): BehaviorSubject<IBowlingResult[]> {

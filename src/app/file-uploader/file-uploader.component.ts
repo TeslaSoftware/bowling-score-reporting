@@ -19,7 +19,6 @@ export class FileUploaderComponent {
   private componentDestroyed$: Subject<boolean> = new Subject()
 
   fileName = '';
-  textData = '';
   errorMessage = "";
   isUploading = false;
 
@@ -54,7 +53,10 @@ export class FileUploaderComponent {
       const textData = fileReader.result as string;
       this.parsingService.parseTextToData(textData)
         .pipe(takeUntil(this.componentDestroyed$))
-        .subscribe((result) => this.handleParsingResult(result));
+        .subscribe({
+          error: (e) => this.handleParsingError(e),
+          complete: () => this.disableLoadingBar()
+        });
     }
 
     fileReader.onerror = () => {
@@ -76,12 +78,15 @@ export class FileUploaderComponent {
     return file.name.split('.').pop() + '';
   }
 
-  private handleParsingResult(parsingError: string) {
+  private handleParsingError(parsingError: string) {
     if (parsingError) {
       this.errorMessage = parsingError;
     }
+    this.disableLoadingBar();
+  }
 
-    // Opóźnij uaktualnienie zmiennej aby pokazać pasek łądowania
-    timer(500).subscribe(() => this.isUploading = false);
+  private disableLoadingBar():void {
+     // Opóźnij uaktualnienie zmiennej aby pokazać pasek łądowania
+     timer(400).subscribe(() => this.isUploading = false);
   }
 }
