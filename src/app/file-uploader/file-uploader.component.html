@@ -1,3 +1,5 @@
+<mat-card>
+    <mat-card-content>
 <div class="file-upload">
     <input type="file" class="native-file-input" (change)="onFileSelected($event)" #fileUpload>
     <div class="file-name" >
@@ -16,3 +18,5 @@
 <div class="progress" *ngIf="isUploading">
     <mat-progress-bar class="progress-bar" mode="indeterminate" />
 </div>
+</mat-card-content>    
+</mat-card>

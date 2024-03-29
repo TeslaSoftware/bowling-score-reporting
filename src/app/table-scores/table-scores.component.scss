@@ -1,0 +1,27 @@
+mat-card-header {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.table-container {
+    margin-top: 1rem;
+    overflow: auto;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-footer-cell,
+.mat-mdc-cell {
+    min-width: 80px;
+    box-sizing: border-box;
+}
+
+.mat-mdc-header-row,
+.mat-mdc-footer-row,
+.mat-mdc-row {
+    min-width: 1920px; /* 24 columns, 80px each */
+}
+
+.text-align-left {
+    text-align: left;
+}

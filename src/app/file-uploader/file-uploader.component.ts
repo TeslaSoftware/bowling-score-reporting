@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CommonModule } from '@angular/common';
-import { Subscription, Subject, BehaviorSubject, timer } from 'rxjs';
+import { Subscription, Subject, timer } from 'rxjs';
 import { ParsingService } from '../parsing-service.service'
 import { takeUntil } from "rxjs/operators"
 
 @Component({
   selector: 'app-file-uploader',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatProgressBarModule],
+  imports: [CommonModule, MatIconModule, MatCardModule, MatButtonModule, MatProgressBarModule],
   templateUrl: './file-uploader.component.html',
   styleUrl: './file-uploader.component.scss'
 })
@@ -48,18 +49,19 @@ export class FileUploaderComponent {
     this.fileName = file.name;
 
     const fileReader = new FileReader();
-    fileReader.onload = (event) => {
+
+    fileReader.onload = () => {
       this.textData = fileReader.result as string;
       const isParsingValid$ = this.parsingService.parseTextToData(this.textData);
       isParsingValid$.pipe(takeUntil(this.componentDestroyed$))
         .subscribe((result) => this.handleParsingResult(result));
     }
-    fileReader.onerror = (event) => {
+
+    fileReader.onerror = () => {
       this.errorMessage = "Niemożna było przesłąć pliku";
     }
-    fileReader.readAsText(file);
 
-    // TODO: Add parser service and subscribe      
+    fileReader.readAsText(file);    
   }
 
   private reset(): void {
