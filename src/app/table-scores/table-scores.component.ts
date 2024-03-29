@@ -20,12 +20,13 @@ import { Subject } from 'rxjs';
 export class TableScoresComponent {
   private componentDestroyed$: Subject<boolean> = new Subject()
   baseColumns: string[] = ['playerName', 'totalScore'];
-  scoreColumns: string[] = Array.from({length: 22}, (v, k) => 'Rzut ' + (k+1)); 
+  scoreColumns: string[] = this.buildScoreColumns();
+  frameHeaders: string[] = Array.from({length: 10}, (v, k) => 'Runda ' + (k+1)).concat(['Runda bonus']); 
+  groupHeaders: string[] = ['blank'].concat(this.frameHeaders);
   displayedColumns: string[] = this.baseColumns.concat(this.scoreColumns);
+
   dataSource = new MatTableDataSource<IBowlingResult>([]);  
   paginator!: MatPaginator;
-  
-  bowlingResults: IBowlingResult[] = [];
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
@@ -39,7 +40,6 @@ export class TableScoresComponent {
     this.parsingService.getBowlingResults()
       .pipe(takeUntil(this.componentDestroyed$))
       .subscribe(updatedBowlingResults => {
-        this.bowlingResults = updatedBowlingResults;
         this.dataSource.data = updatedBowlingResults;
       });
 
@@ -55,8 +55,24 @@ export class TableScoresComponent {
     this.componentDestroyed$.complete()
   }
 
+  /** Sets mat table data source attributes for sorting and pagination */
   private setDataSourceAttributes() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+  }
+
+  /** 
+   * Builds score column header names.
+   * @example
+   * Rzut 1 (7)
+   * Where number in paranthesis is total number of rolls.   * 
+   */
+  private buildScoreColumns() {
+    return Array.from({length: 22}, (v, k) => (k+1)).map(this.createScoreColumnName); 
+  }
+
+  private createScoreColumnName(rollNumber: number): string {
+    const frameRollNumber = rollNumber % 2 == 0 ? 2 : 1;
+    return `Rzut ${frameRollNumber} (${rollNumber})`
   }
 }

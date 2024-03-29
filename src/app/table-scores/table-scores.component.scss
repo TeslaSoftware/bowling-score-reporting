@@ -12,14 +12,14 @@ mat-card-header {
 .mat-mdc-header-cell,
 .mat-mdc-footer-cell,
 .mat-mdc-cell {
-    min-width: 80px;
+    min-width: 90px;
     box-sizing: border-box;
 }
 
 .mat-mdc-header-row,
 .mat-mdc-footer-row,
 .mat-mdc-row {
-    min-width: 1920px; /* 24 columns, 80px each */
+    min-width: 2160px; /* 24 columns, 90px each */
 }
 
 .text-align-left {
